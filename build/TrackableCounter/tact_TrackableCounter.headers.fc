@@ -1,0 +1,94 @@
+;;
+;; Header files for TrackableCounter
+;; NOTE: declarations are sorted for optimal order
+;;
+
+;; __tact_verify_address
+slice __tact_verify_address(slice address) inline;
+
+;; __tact_load_address
+(slice, slice) __tact_load_address(slice cs) inline;
+
+;; __tact_store_address
+builder __tact_store_address(builder b, slice address) inline;
+
+;; __tact_my_balance
+int __tact_my_balance() inline;
+
+;; __tact_not_null
+forall X -> X __tact_not_null(X x) inline;
+
+;; __tact_context_get
+(int, slice, int, slice) __tact_context_get() inline;
+
+;; __tact_context_get_sender
+slice __tact_context_get_sender() inline;
+
+;; __tact_store_bool
+builder __tact_store_bool(builder b, int v) inline;
+
+;; $Deploy$_load
+(slice, ((int))) $Deploy$_load(slice sc_0) inline;
+
+;; $DeployOk$_store
+builder $DeployOk$_store(builder build_0, (int) v) inline;
+
+;; $DeployOk$_store_cell
+cell $DeployOk$_store_cell((int) v) inline;
+
+;; $Add$_load
+(slice, ((int, int))) $Add$_load(slice sc_0) inline;
+
+;; $TrackableCounter$_store
+builder $TrackableCounter$_store(builder build_0, (int, int, int, slice) v) inline;
+
+;; $TrackableCounter$_load
+(slice, ((int, int, int, slice))) $TrackableCounter$_load(slice sc_0) inline;
+
+;; $StateInit$_not_null
+((cell, cell)) $StateInit$_not_null(tuple v) inline;
+
+;; $TrackableCounter$init$_load
+(slice, ((int))) $TrackableCounter$init$_load(slice sc_0) inline;
+
+;; $TrackableCounter$_contract_init
+(int, int, int, slice) $TrackableCounter$_contract_init(int $id) impure inline_ref;
+
+;; $TrackableCounter$_contract_load
+(int, int, int, slice) $TrackableCounter$_contract_load() impure inline_ref;
+
+;; $TrackableCounter$_contract_store
+() $TrackableCounter$_contract_store((int, int, int, slice) v) impure inline;
+
+;; $global_send
+() $global_send((int, slice, int, int, cell, cell, cell) $params) impure inline_ref;
+
+;; $TrackableCounter$_fun_counter
+((int, int, int, slice), int) $TrackableCounter$_fun_counter((int, int, int, slice) $self) impure inline_ref;
+
+;; $TrackableCounter$_fun_id
+((int, int, int, slice), int) $TrackableCounter$_fun_id((int, int, int, slice) $self) impure inline_ref;
+
+;; $TrackableCounter$_fun_filterMessage
+((int, int, int, slice), int) $TrackableCounter$_fun_filterMessage((int, int, int, slice) $self) impure inline_ref;
+
+;; $SendParameters$_constructor_bounce_to_value_mode_body_code_data
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int bounce, slice to, int value, int mode, cell body, cell code, cell data) inline;
+
+;; $TrackableCounter$_fun_forward
+((int, int, int, slice), ()) $TrackableCounter$_fun_forward((int, int, int, slice) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline_ref;
+
+;; $TrackableCounter$_fun_notify
+((int, int, int, slice), ()) $TrackableCounter$_fun_notify((int, int, int, slice) $self, cell $body) impure inline;
+
+;; $TrackableCounter$_fun_receiveNewMessage
+((int, int, int, slice), ()) $TrackableCounter$_fun_receiveNewMessage((int, int, int, slice) $self) impure inline_ref;
+
+;; $TrackableCounter$_fun_stats
+((int, int, int, slice), int) $TrackableCounter$_fun_stats((int, int, int, slice) $self) impure inline_ref;
+
+;; $TrackableCounter$_fun_owner
+((int, int, int, slice), slice) $TrackableCounter$_fun_owner((int, int, int, slice) $self) impure inline_ref;
+
+;; $DeployOk$_constructor_queryId
+((int)) $DeployOk$_constructor_queryId(int queryId) inline;

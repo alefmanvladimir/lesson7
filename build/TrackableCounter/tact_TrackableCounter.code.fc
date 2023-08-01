@@ -1,0 +1,193 @@
+#pragma version =0.4.3;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_TrackableCounter.headers.fc";
+#include "tact_TrackableCounter.stdlib.fc";
+#include "tact_TrackableCounter.storage.fc";
+
+;;
+;; Contract TrackableCounter functions
+;;
+
+(int, int, int, slice) $TrackableCounter$_contract_init(int $id) impure inline_ref {
+    var (($self'id, $self'counter, $self'numMessagesReceived, $self'owner)) = (null(), null(), null(), null());
+    $self'id = $id;
+    $self'counter = 0;
+    $self'numMessagesReceived = 0;
+    $self'owner = __tact_context_get_sender();
+    return ($self'id, $self'counter, $self'numMessagesReceived, $self'owner);
+}
+
+((int, int, int, slice), int) $TrackableCounter$_fun_counter((int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'counter, $self'numMessagesReceived, $self'owner)) = $self;
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), $self'counter);
+}
+
+((int, int, int, slice), int) $TrackableCounter$_fun_id((int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'counter, $self'numMessagesReceived, $self'owner)) = $self;
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), $self'id);
+}
+
+((int, int, int, slice), int) $TrackableCounter$_fun_filterMessage((int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'counter, $self'numMessagesReceived, $self'owner)) = $self;
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), true);
+}
+
+((int, int, int, slice), ()) $TrackableCounter$_fun_receiveNewMessage((int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'counter, $self'numMessagesReceived, $self'owner)) = $self;
+    if (($self'id, $self'counter, $self'numMessagesReceived, $self'owner)~$TrackableCounter$_fun_filterMessage()) {
+        $self'numMessagesReceived = ($self'numMessagesReceived + 1);
+    }
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), ());
+}
+
+((int, int, int, slice), int) $TrackableCounter$_fun_stats((int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'counter, $self'numMessagesReceived, $self'owner)) = $self;
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), $self'numMessagesReceived);
+}
+
+((int, int, int, slice), slice) $TrackableCounter$_fun_owner((int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'counter, $self'numMessagesReceived, $self'owner)) = $self;
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), $self'owner);
+}
+
+;;
+;; Receivers of a Contract TrackableCounter
+;;
+
+(((int, int, int, slice)), ()) $TrackableCounter$_internal_binary_Add((int, int, int, slice) $self, (int, int) $msg) impure inline {
+    var ($self'id, $self'counter, $self'numMessagesReceived, $self'owner) = $self;
+    var ($msg'queryId, $msg'amount) = $msg;
+    ($self'id, $self'counter, $self'numMessagesReceived, $self'owner)~$TrackableCounter$_fun_receiveNewMessage();
+    $self'counter = ($self'counter + $msg'amount);
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), ());
+}
+
+(((int, int, int, slice)), ()) $TrackableCounter$_internal_binary_Deploy((int, int, int, slice) $self, (int) $deploy) impure inline {
+    var ($self'id, $self'counter, $self'numMessagesReceived, $self'owner) = $self;
+    var ($deploy'queryId) = $deploy;
+    ($self'id, $self'counter, $self'numMessagesReceived, $self'owner)~$TrackableCounter$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), ());
+}
+
+((int, int, int, slice), ()) $TrackableCounter$_internal_text_6a04aecf27d00c0e3f418ca02bddd3dcfcc38dfb871da2fab6c9e7c73618650f((int, int, int, slice) $self) impure inline {
+    var ($self'id, $self'counter, $self'numMessagesReceived, $self'owner) = $self;
+    if (false) {
+    }
+    return (($self'id, $self'counter, $self'numMessagesReceived, $self'owner), ());
+}
+
+;;
+;; Get methods of a Contract TrackableCounter
+;;
+
+_ %counter() method_id(104984) {
+    var self = $TrackableCounter$_contract_load();
+    var res = self~$TrackableCounter$_fun_counter();
+    return res;
+}
+
+_ %id() method_id(105872) {
+    var self = $TrackableCounter$_contract_load();
+    var res = self~$TrackableCounter$_fun_id();
+    return res;
+}
+
+_ %stats() method_id(89570) {
+    var self = $TrackableCounter$_contract_load();
+    var res = self~$TrackableCounter$_fun_stats();
+    return res;
+}
+
+_ %owner() method_id(83229) {
+    var self = $TrackableCounter$_contract_load();
+    var res = self~$TrackableCounter$_fun_owner();
+    return res;
+}
+
+_ supported_interfaces() method_id {
+    return (
+        "org.ton.introspection.v0"H >> 128,
+        "org.ton.abi.ipfs.v0"H >> 128,
+        "org.ton.deploy.lazy.v0"H >> 128,
+        "org.ton.chain.workchain.v0"H >> 128,
+        "org.ton.ownable"H >> 128
+    );
+}
+
+_ get_abi_ipfs() method_id {
+    return "ipfs://QmdQvvvXCtkiFPByPw9uzQzfCk8yGRyuPf1VBDEVjyLi8o";
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract TrackableCounter
+;;
+
+((int, int, int, slice), int) $TrackableCounter$_contract_router_internal((int, int, int, slice) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive Add message
+    if (op == 2335447074) {
+        var msg = in_msg~$Add$_load();
+        self~$TrackableCounter$_internal_binary_Add(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Deploy message
+    if (op == 2490013878) {
+        var msg = in_msg~$Deploy$_load();
+        self~$TrackableCounter$_internal_binary_Deploy(msg);
+        return (self, true);
+    }
+    
+    ;; Text Receivers
+    if (op == 0) {
+        var text_op = slice_hash(in_msg);
+        
+        ;; Receive "reset stats" message
+        if (text_op == 0x6a04aecf27d00c0e3f418ca02bddd3dcfcc38dfb871da2fab6c9e7c73618650f) {
+            self~$TrackableCounter$_internal_text_6a04aecf27d00c0e3f418ca02bddd3dcfcc38dfb871da2fab6c9e7c73618650f();
+            return (self, true);
+        }
+    }
+    
+    return (self, false);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $TrackableCounter$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$TrackableCounter$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $TrackableCounter$_contract_store(self);
+}

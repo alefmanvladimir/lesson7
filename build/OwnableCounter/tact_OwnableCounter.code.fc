@@ -1,0 +1,136 @@
+#pragma version =0.4.3;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_OwnableCounter.headers.fc";
+#include "tact_OwnableCounter.stdlib.fc";
+#include "tact_OwnableCounter.storage.fc";
+
+;;
+;; Contract OwnableCounter functions
+;;
+
+(int, int) $OwnableCounter$_contract_init(int $id) impure inline_ref {
+    var (($self'id, $self'counter)) = (null(), null());
+    $self'id = $id;
+    $self'counter = 0;
+    return ($self'id, $self'counter);
+}
+
+((int, int), int) $OwnableCounter$_fun_counter((int, int) $self) impure inline_ref {
+    var (($self'id, $self'counter)) = $self;
+    return (($self'id, $self'counter), $self'counter);
+}
+
+((int, int), int) $OwnableCounter$_fun_id((int, int) $self) impure inline_ref {
+    var (($self'id, $self'counter)) = $self;
+    return (($self'id, $self'counter), $self'id);
+}
+
+;;
+;; Receivers of a Contract OwnableCounter
+;;
+
+(((int, int)), ()) $OwnableCounter$_internal_binary_Add((int, int) $self, (int, int) $msg) impure inline {
+    var ($self'id, $self'counter) = $self;
+    var ($msg'queryId, $msg'amount) = $msg;
+    $self'counter = ($self'counter + $msg'amount);
+    return (($self'id, $self'counter), ());
+}
+
+(((int, int)), ()) $OwnableCounter$_internal_binary_Deploy((int, int) $self, (int) $deploy) impure inline {
+    var ($self'id, $self'counter) = $self;
+    var ($deploy'queryId) = $deploy;
+    ($self'id, $self'counter)~$OwnableCounter$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'id, $self'counter), ());
+}
+
+;;
+;; Get methods of a Contract OwnableCounter
+;;
+
+_ %counter() method_id(104984) {
+    var self = $OwnableCounter$_contract_load();
+    var res = self~$OwnableCounter$_fun_counter();
+    return res;
+}
+
+_ %id() method_id(105872) {
+    var self = $OwnableCounter$_contract_load();
+    var res = self~$OwnableCounter$_fun_id();
+    return res;
+}
+
+_ supported_interfaces() method_id {
+    return (
+        "org.ton.introspection.v0"H >> 128,
+        "org.ton.abi.ipfs.v0"H >> 128,
+        "org.ton.deploy.lazy.v0"H >> 128,
+        "org.ton.chain.workchain.v0"H >> 128
+    );
+}
+
+_ get_abi_ipfs() method_id {
+    return "ipfs://QmWgiYe1jV4QvoE9j3SYmab267wFtfRSPPmCJ1VQrZAAsX";
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract OwnableCounter
+;;
+
+((int, int), int) $OwnableCounter$_contract_router_internal((int, int) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive Add message
+    if (op == 2335447074) {
+        var msg = in_msg~$Add$_load();
+        self~$OwnableCounter$_internal_binary_Add(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Deploy message
+    if (op == 2490013878) {
+        var msg = in_msg~$Deploy$_load();
+        self~$OwnableCounter$_internal_binary_Deploy(msg);
+        return (self, true);
+    }
+    
+    return (self, false);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $OwnableCounter$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$OwnableCounter$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $OwnableCounter$_contract_store(self);
+}
